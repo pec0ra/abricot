@@ -106,3 +106,15 @@ security/selinux/flask.h
 usr/gen_init_cpio
 usr/initramfs_data.cpio
 arch/arm/boot/zImage-dtb
+scripts/basic/fixdep
+scripts/bin2c
+scripts/conmakehash
+scripts/dtc/dtc
+scripts/genksyms/genksyms
+scripts/kallsyms
+scripts/mod/mk_elfconfig
+scripts/mod/modpost
+scripts/selinux/genheaders/genheaders
+scripts/selinux/mdp/mdp
+scripts/kconfig/mconf
+*.gzip
