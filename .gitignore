@@ -118,3 +118,4 @@ scripts/selinux/genheaders/genheaders
 scripts/selinux/mdp/mdp
 scripts/kconfig/mconf
 *.gzip
+*.vim
