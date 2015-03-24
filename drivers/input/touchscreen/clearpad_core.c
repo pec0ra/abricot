@@ -1002,8 +1002,12 @@ static int clearpad_set_cover_window(struct clearpad_t *this)
 	rc = clearpad_put(SYNF(this, F51_CUSTOM,
 			CTRL, 0x02), this->cover.win_left >> 8);
 	if (rc)
-		dev_err(&this->pdev->dev, "failed to set cover window");
+		goto exit;
+
+	rc = clearpad_set_cover_status(this);
 exit:
+	if (rc)
+		dev_err(&this->pdev->dev, "failed to set cover window");
 	return rc;
 }
 

@@ -71,6 +71,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -340,8 +341,8 @@
 		qcom,mdss-dsi-h-back-porch = <8>;
 		qcom,mdss-dsi-h-pulse-width = <8>;
 		qcom,mdss-dsi-h-sync-skew = <0>;
-		qcom,mdss-dsi-v-back-porch = <4>;
-		qcom,mdss-dsi-v-front-porch = <237>;
+		qcom,mdss-dsi-v-back-porch = <8>;
+		qcom,mdss-dsi-v-front-porch = <233>;
 		qcom,mdss-dsi-v-pulse-width = <2>;
 		qcom,mdss-dsi-h-left-border = <0>;
 		qcom,mdss-dsi-h-right-border = <0>;
@@ -377,6 +378,15 @@
 				15 01 00 00 00 00 02 FF 10
 				15 01 00 00 00 00 02 35 00
 				39 01 00 00 00 00 03 44 03 00
+				15 01 00 00 00 00 02 FF E0
+				15 01 00 00 00 00 02 FB 01
+				15 01 00 00 00 00 02 B5 86
+				15 01 00 00 00 00 02 B6 77
+				15 01 00 00 00 00 02 B8 AD
+				15 01 00 00 00 00 02 FF 20
+				15 01 00 00 00 00 02 FB 01
+				15 01 00 00 00 00 02 10 04
+				15 01 00 00 00 00 02 FF 10
 				05 01 00 00 1E 00 01 11];
 		qcom,mdss-dsi-on-command = [05 01 00 00 28 00 01 29];
 		qcom,mdss-dsi-off-command = [15 01 00 00 00 00 02 FF 10
@@ -412,6 +422,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -666,21 +677,21 @@
 			0x00 0xE0 0x00 0x03 0x00 0x03 0x8000 0x5400 0x4d00
 			0xFF 0x00 0x00 0x3B 0x00 0x3B 0x8000 0x8000 0x8000>;
 
-		somc,chenge-fps-command = [15 01 00 00 00 00 02 FF 24
+		somc,change-fps-command = [15 01 00 00 00 00 02 FF 24
 				15 01 00 00 00 00 02 92 95
 				15 01 00 00 00 00 02 FF 10
 				39 01 00 00 00 00 03 44 03 00];
-		somc,chenge-fps-default = <0x95>;
+		somc,change-fps-default = <0x95>;
 		somc,display-clock = <17330000>;
 		somc,driver-ic-vbp = <8>;
 		somc,driver-ic-vfp = <2>;
-		somc,chenge-fps-cmds-num = <1>;
-		somc,chenge-fps-payload-num = <1>;
+		somc,change-fps-cmds-num = <1>;
+		somc,change-fps-payload-num = <1>;
 
-		somc,chenge-wait-update = <1>;
-		somc,chenge-wait-on = <40 60>;
-		somc,chenge-wait-off = <80 90>;
-		somc,chenge-wait-cmds-num = <0 2>;
+		somc,change-wait-update = <1>;
+		somc,change-wait-on = <40 60>;
+		somc,change-wait-off = <80 90>;
+		somc,change-wait-cmds-num = <0 2>;
 		somc,fps-threshold = <47400>;
 		somc,te-c-update = <1>;
 		somc,te-c-mode-60fps = <0x03 0x00>;
@@ -747,6 +758,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -1015,8 +1027,8 @@
 		qcom,mdss-dsi-h-back-porch = <8>;
 		qcom,mdss-dsi-h-pulse-width = <8>;
 		qcom,mdss-dsi-h-sync-skew = <0>;
-		qcom,mdss-dsi-v-back-porch = <4>;
-		qcom,mdss-dsi-v-front-porch = <237>;
+		qcom,mdss-dsi-v-back-porch = <8>;
+		qcom,mdss-dsi-v-front-porch = <233>;
 		qcom,mdss-dsi-v-pulse-width = <2>;
 		qcom,mdss-dsi-h-left-border = <0>;
 		qcom,mdss-dsi-h-right-border = <0>;
@@ -1032,10 +1044,18 @@
 				15 01 00 00 00 00 02 BB 10
 				15 01 00 00 00 00 02 35 00
 				15 01 00 00 00 00 02 44 03
+				23 01 00 00 00 00 02 FF E0
+				23 01 00 00 00 00 02 B5 86
+				23 01 00 00 00 00 02 B6 77
+				23 01 00 00 00 00 02 B8 AD
+				23 01 00 00 00 00 02 FB 01
+				23 01 00 00 00 00 02 FF 20
+				23 01 00 00 00 00 02 10 04
+				23 01 00 00 00 00 02 FB 01
 				23 01 00 00 00 00 02 FF 24
 				23 01 00 00 00 00 02 92 95
 				23 01 00 00 00 00 02 FB 01
-				15 01 00 00 00 00 02 C4 20
+				23 01 00 00 00 00 02 C4 20
 				23 01 00 00 00 00 02 FF 10
 				23 01 00 00 00 00 02 FB 01
 				05 01 00 00 64 00 01 11];
@@ -1072,6 +1092,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -1089,6 +1110,7 @@
 		somc,lcd-id-adc = <565000 653000>;
 		somc,disp-en-on-post = <20>;
 		somc,pw-on-rst-seq = <1 15>;
+		somc,disp-en-off-post = <70>;
 		somc,pw-off-rst-seq = <0 0>;
 		somc,pw-down-period = <100>;
 
@@ -1324,21 +1346,21 @@
 			0x00 0xE0 0x00 0x03 0x00 0x03 0x8000 0x5400 0x4d00
 			0xFF 0x00 0x00 0x3B 0x00 0x3B 0x8000 0x8000 0x8000>;
 
-		somc,chenge-fps-command = [15 01 00 00 00 00 02 FF 24
+		somc,change-fps-command = [15 01 00 00 00 00 02 FF 24
 				15 01 00 00 00 00 02 92 95
 				15 01 00 00 00 00 02 FF 10
 				15 01 00 00 00 00 02 44 03];
-		somc,chenge-fps-default = <0x95>;
+		somc,change-fps-default = <0x95>;
 		somc,display-clock = <17330000>;
 		somc,driver-ic-vbp = <8>;
 		somc,driver-ic-vfp = <8>;
-		somc,chenge-fps-cmds-num = <1>;
-		somc,chenge-fps-payload-num = <1>;
+		somc,change-fps-cmds-num = <1>;
+		somc,change-fps-payload-num = <1>;
 
-		somc,chenge-wait-update = <0>;
-		somc,chenge-wait-on = <0 0>;
-		somc,chenge-wait-off = <0 0>;
-		somc,chenge-wait-cmds-num = <0 0>;
+		somc,change-wait-update = <0>;
+		somc,change-wait-on = <0 0>;
+		somc,change-wait-off = <0 0>;
+		somc,change-wait-cmds-num = <0 0>;
 		somc,fps-threshold = <47400>;
 		somc,te-c-update = <1>;
 		somc,te-c-mode-60fps = <0x03 0x00>;
@@ -1361,8 +1383,8 @@
 		qcom,mdss-dsi-h-back-porch = <8>;
 		qcom,mdss-dsi-h-pulse-width = <8>;
 		qcom,mdss-dsi-h-sync-skew = <0>;
-		qcom,mdss-dsi-v-back-porch = <4>;
-		qcom,mdss-dsi-v-front-porch = <237>;
+		qcom,mdss-dsi-v-back-porch = <8>;
+		qcom,mdss-dsi-v-front-porch = <233>;
 		qcom,mdss-dsi-v-pulse-width = <2>;
 		qcom,mdss-dsi-h-left-border = <0>;
 		qcom,mdss-dsi-h-right-border = <0>;
@@ -1371,7 +1393,15 @@
 		qcom,mdss-dsi-bpp = <24>;
 		qcom,mdss-dsi-underflow-color = <0x0>;
 		qcom,mdss-dsi-border-color = <0>;
-		somc,mdss-dsi-init-command = [15 01 00 00 00 00 02 FF 24
+		somc,mdss-dsi-init-command = [15 01 00 00 00 00 02 FF E0
+				15 01 00 00 00 00 02 FB 01
+				15 01 00 00 00 00 02 B5 86
+				15 01 00 00 00 00 02 B6 77
+				15 01 00 00 00 00 02 B8 AD
+				15 01 00 00 00 00 02 FF 20
+				15 01 00 00 00 00 02 FB 01
+				15 01 00 00 00 00 02 10 04
+				15 01 00 00 00 00 02 FF 24
 				15 01 00 00 00 00 02 FB 01
 				15 01 00 00 00 00 02 C6 00
 				15 01 00 00 00 00 02 C5 32
@@ -1416,6 +1446,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -1669,21 +1700,21 @@
 			0x00 0xE0 0x00 0x03 0x00 0x03 0x8000 0x5400 0x4d00
 			0xFF 0x00 0x00 0x3B 0x00 0x3B 0x8000 0x8000 0x8000>;
 
-		somc,chenge-fps-command = [15 01 00 00 00 00 02 FF 24
+		somc,change-fps-command = [15 01 00 00 00 00 02 FF 24
 				15 01 00 00 00 00 02 92 92
 				15 01 00 00 00 00 02 FF 10
 				39 01 00 00 00 00 03 44 03 00];
-		somc,chenge-fps-default = <0x92>;
+		somc,change-fps-default = <0x92>;
 		somc,display-clock = <17330000>;
 		somc,driver-ic-vbp = <48>;
 		somc,driver-ic-vfp = <6>;
-		somc,chenge-fps-cmds-num = <1>;
-		somc,chenge-fps-payload-num = <1>;
+		somc,change-fps-cmds-num = <1>;
+		somc,change-fps-payload-num = <1>;
 
-		somc,chenge-wait-update = <0>;
-		somc,chenge-wait-on = <0 0>;
-		somc,chenge-wait-off = <0 0>;
-		somc,chenge-wait-cmds-num = <0 0>;
+		somc,change-wait-update = <0>;
+		somc,change-wait-on = <0 0>;
+		somc,change-wait-off = <0 0>;
+		somc,change-wait-cmds-num = <0 0>;
 		somc,fps-threshold = <47400>;
 		somc,te-c-update = <1>;
 		somc,te-c-mode-60fps = <0x03 0x00>;
@@ -1750,6 +1781,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -1831,6 +1863,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;

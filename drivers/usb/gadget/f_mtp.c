@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010 Google, Inc.
  * Author: Mike Lockwood <lockwood@android.com>
- * Copyright (C) 2011 Sony Mobile Communications Inc.
+ * Copyright (C) 2012 Sony Mobile Communications Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and

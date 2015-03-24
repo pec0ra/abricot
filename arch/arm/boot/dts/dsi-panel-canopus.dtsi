@@ -1,5 +1,5 @@
 /* Copyright (c) 2013, Code Aurora Forum. All rights reserved.
- * Copyright (C) 2013-2014 Sony Mobile Communications AB.
+ * Copyright (C) 2013 Sony Mobile Communications Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -12,7 +12,6 @@
  */
 
 &mdss_mdp {
-	qcom,mdss-ib-factor = <19 10>;
 	dsi_renesas_jdi_1080_vid: somc,renesas_jdi_1080p_panel {
 		qcom,mdss-dsi-panel-name = "jdi renesas 1080p video";
 		qcom,mdss-dsi-panel-controller = <&mdss_dsi0>;
@@ -67,6 +66,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -241,6 +241,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;
@@ -315,6 +316,7 @@
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_suspend_resume_mode";
 		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-tx-eot-append;
 
 		somc,driver-ic = <0>;
 		somc,dric-gpio = <&msmgpio 26 0>;

@@ -279,6 +279,7 @@
 			<0xff 211>, /* usb_dwc3_otg */
 			<0xff 240>, /* summary_irq_kpss */
 			<0xff 253>, /* sdcc_pwr_cmd_irq */
+			<0xff 255>, /* sdcc_bam_irq */
 			<0xff 256>, /* sdcc_pwr_cmd_irq */
 			<0xff 268>, /* bam_irq[1] */
 			<0xff 270>, /* bam_irq[0] */
@@ -377,5 +378,13 @@
 		compatible = "qcom,rpmrbcpr-stats";
 		reg = <0xfc000000 0x1a0000>;
 		qcom,start-offset = <0x190010>;
+	};
+
+	qcom,rpm-master-stats@fc428150 {
+		compatible = "qcom,rpm-master-stats";
+		reg = <0xfc428150 0x3200>;
+		qcom,masters = "APSS", "MPSS", "LPSS", "PRONTO";
+		qcom,master-stats-version = <2>;
+		qcom,master-offset = <2560>;
 	};
 };

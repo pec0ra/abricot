@@ -56,6 +56,7 @@
 			pad,stage0-offset_l_clamp = <0x0018>;
 			pad,stage0-offset_h_clamp = <0x000A>;
 			pad,stage0-hysterisis = <40>;
+			pad,stage0-high_th_offset = <30>;
 			pad,stage1-connect1 = <0x3FFF>;
 			pad,stage1-connect2 = <0x1BFF>;
 			pad,stage1-afe = <0x1200>;
@@ -65,20 +66,19 @@
 			pad,stage1-offset_l_clamp = <0x0030>;
 			pad,stage1-offset_h_clamp = <0x000A>;
 			pad,stage1-hysterisis = <10>;
+			pad,stage1-high_th_offset = <30>;
 			status = "ok";
 		};
 	};
 
-	gpio_keys {
+	sim_detect {
+		compatible = "sim-detect";
 		interrupt-parent = <&msmgpio>;
 		interrupts = <9 0>;
 
-		sim_det {
+		sim1_det {
 			label = "sim-detection";
 			gpios = <&msmgpio 9 0x0>;
-			linux,input-type = <5>;
-			linux,code = <7>;
-			gpio-key,wakeup;
 			debounce-interval = <10>;
 		};
 	};
