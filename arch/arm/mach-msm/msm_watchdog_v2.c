@@ -8,6 +8,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications Inc.
+ * Modifications are Copyright (c) 2014 Sony Mobile Communications Inc,
+ * and licensed under the license of the file.
  */
 
 #include <linux/module.h>
@@ -25,6 +29,7 @@
 #include <linux/of.h>
 #include <linux/cpu.h>
 #include <linux/platform_device.h>
+#include <linux/nmi.h>
 #include <mach/scm.h>
 #include <mach/msm_memory_dump.h>
 
@@ -356,6 +361,10 @@ static irqreturn_t wdog_bark_handler(int irq, void *dev_id)
 		wdog_dd->last_pet, nanosec_rem / 1000);
 	if (wdog_dd->do_ipi_ping)
 		dump_cpu_alive_mask(wdog_dd);
+	printk(KERN_INFO "Dumping blocked tasks\n");
+	show_state_filter(TASK_UNINTERRUPTIBLE);
+	printk(KERN_INFO "Dumping all CPU backtraces\n");
+	trigger_all_cpu_backtrace();
 	printk(KERN_INFO "Causing a watchdog bite!");
 	__raw_writel(1, wdog_dd->base + WDT0_BITE_TIME);
 	mb();

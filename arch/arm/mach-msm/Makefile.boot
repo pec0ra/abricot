@@ -48,11 +48,23 @@ endif
 # MSM8974
    zreladdr-$(CONFIG_ARCH_MSM8974)	:= 0x00008000
    dtb-$(CONFIG_MACH_SONY_SIRIUS)	+= msm8974pro-ab-shinano_sirius.dtb
+   dtb-$(CONFIG_MACH_SONY_SIRIUS_DCM)	+= msm8974pro-ab-shinano_sirius_dcm.dtb
+   dtb-$(CONFIG_MACH_SONY_SIRIUS_VZW)	+= msm8974pro-ac-shinano_sirius_vzw.dtb
    dtb-$(CONFIG_MACH_SONY_CASTOR)	+= msm8974pro-ab-shinano_castor.dtb
+   dtb-$(CONFIG_MACH_SONY_CASTOR_DCM)	+= msm8974pro-ab-shinano_castor_dcm.dtb
+   dtb-$(CONFIG_MACH_SONY_CASTOR_KDDI)	+= msm8974pro-ab-shinano_castor_kddi.dtb
+   dtb-$(CONFIG_MACH_SONY_CASTOR_VZW)	+= msm8974pro-ab-shinano_castor_vzw.dtb
    dtb-$(CONFIG_MACH_SONY_CASTOR_BRAZIL)+= msm8974pro-ab-shinano_castor_brazil.dtb
    dtb-$(CONFIG_MACH_SONY_CASTOR_WINDY)	+= apq8074pro-ab-shinano_castor_windy.dtb
+   dtb-$(CONFIG_MACH_SONY_CANOPUS)	+= msm8974pro-ab-shinano_canopus.dtb
+   dtb-$(CONFIG_MACH_SONY_CANOPUS_KDDI)	+= msm8974pro-ab-shinano_canopus_kddi.dtb
    dtb-$(CONFIG_MACH_SONY_LEO)		+= msm8974pro-ac-shinano_leo.dtb
+   dtb-$(CONFIG_MACH_SONY_LEO_DCM)	+= msm8974pro-ac-shinano_leo_dcm.dtb
+   dtb-$(CONFIG_MACH_SONY_LEO_KDDI)	+= msm8974pro-ac-shinano_leo_kddi.dtb
+   dtb-$(CONFIG_MACH_SONY_LEO_SBM)	+= msm8974pro-ac-shinano_leo_sbm.dtb
+   dtb-$(CONFIG_MACH_SONY_LEO_DSDS)	+= msm8974pro-ac-shinano_leo.dtb
    dtb-$(CONFIG_MACH_SONY_ARIES)	+= msm8974pro-ac-shinano_aries.dtb
+   dtb-$(CONFIG_MACH_SONY_ARIES_DCM)	+= msm8974pro-ac-shinano_aries_dcm.dtb
    dtb-$(CONFIG_MACH_SONY_SCORPION)	+= msm8974pro-ac-shinano_scorpion.dtb
    dtb-$(CONFIG_MACH_SONY_SCORPION_WINDY)+= apq8074pro-ac-shinano_scorpion_windy.dtb
 

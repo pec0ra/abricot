@@ -10,6 +10,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications Inc.
+ * Modifications are licensed under the License.
  */
 
 &soc {
@@ -554,19 +558,6 @@
 		};
 	};
 
-	qcom,ion {
-		compatible = "qcom,msm-ion";
-
-		qcom,ion-heap@20 { /* CAMERA HEAP */
-			compatible = "qcom,msm-ion-reserve";
-			reg = <20>;
-			qcom,heap-align = <0x1000>;
-			qcom,memory-reservation-type = "EBI1"; /* reserve EBI memory */
-			qcom,memory-reservation-size = <0x6400000>;
-			qcom,ion-heap-type = "CARVEOUT";
-		};
-	};
-
 	gpio_keys {
 		compatible = "gpio-keys";
 		input-name = "gpio-keys";
@@ -587,6 +578,19 @@
 			linux,code = <115>;
 			gpio-key,wakeup;
 			debounce-interval = <15>;
+		};
+	};
+
+	qcom,ion {
+		compatible = "qcom,msm-ion";
+
+		qcom,ion-heap@20 { /* CAMERA HEAP */
+			compatible = "qcom,msm-ion-reserve";
+			reg = <20>;
+			qcom,heap-align = <0x1000>;
+			qcom,memory-reservation-type = "EBI1"; /* reserve EBI memory */
+			qcom,memory-reservation-size = <0x6400000>;
+			qcom,ion-heap-type = "CARVEOUT";
 		};
 	};
 
@@ -612,16 +616,16 @@
 		qcom,mbhc-audio-jack-type = "5-pole-jack";
 	};
 
-	qcom,msm-pcm-bit {
-		compatible = "qcom,msm-pcm-dsp";
-		qcom,msm-pcm-dsp-id = <2>;
-		qcom,msm-pcm-bit;
+	qti,msm-pcm-bit {
+		compatible = "qti,msm-pcm-dsp";
+		qti,msm-pcm-dsp-id = <2>;
+		qti,msm-pcm-bit;
 	};
 
-	qcom,msm-pcm-dsee {
-		compatible = "qcom,msm-pcm-dsp";
-		qcom,msm-pcm-dsp-id = <3>;
-		qcom,msm-pcm-dsee;
+	qti,msm-pcm-dsee {
+		compatible = "qti,msm-pcm-dsp";
+		qti,msm-pcm-dsp-id = <3>;
+		qti,msm-pcm-dsee;
 	};
 
 	bu520x1nvx {

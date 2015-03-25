@@ -12,6 +12,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications Inc.
+ * Modifications are licensed under the License.
  */
 
 
@@ -45,8 +49,9 @@
 };
 
 &pm8941_chg {
-	qcom,step-thresh-soc = <101>;
-	qcom,ibatmax-ma-under-step = <1550>;
+	qcom,step-thresh-soc = <60>;
+	qcom,ibatmax-ma-over-step = <1550>;
+	qcom,ibatmax-ma-under-step = <2150>;
 };
 
 &pm8941_bms {

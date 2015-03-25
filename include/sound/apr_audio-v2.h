@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
 *  Copyright (C) 2013 Sony Mobile Communications Inc.
 *
 * This program is free software; you can redistribute it and/or modify
@@ -580,6 +580,15 @@ struct adm_cmd_matrix_mute_v5 {
 	/* Clients must set this field to zero.*/
 } __packed;
 
+#define ASM_PARAM_ID_AAC_STEREO_MIX_COEFF_SELECTION_FLAG_V2 (0x00010DD8)
+
+struct asm_aac_stereo_mix_coeff_selection_param_v2 {
+	struct apr_hdr          hdr;
+	u32                     param_id;
+	u32                     param_size;
+	u32                     aac_stereo_mix_coeff_flag;
+} __packed;
+
 /* Allows a client to connect the desired stream to
  * the desired AFE port through the stream router
  *
@@ -758,7 +767,6 @@ struct adm_cmd_connect_afe_port_v5 {
 #define AFE_PORT_ID_SECONDARY_PCM_RX        0x100C
 #define AFE_PORT_ID_SECONDARY_PCM_TX        0x100D
 #define AFE_PORT_ID_MULTICHAN_HDMI_RX       0x100E
-#define AFE_PORT_ID_SECONDARY_MI2S_RX_VIBRA	0x1010
 #define  AFE_PORT_ID_RT_PROXY_PORT_001_RX   0x2000
 #define  AFE_PORT_ID_RT_PROXY_PORT_001_TX   0x2001
 #define AFE_PORT_ID_INTERNAL_BT_SCO_RX      0x3000
@@ -6875,84 +6883,42 @@ struct afe_param_id_clip_bank_sel {
 } __packed;
 
 /* SOMC effect start */
-#define SONY_ADM_PAYLOAD_SIZE	(4 * sizeof(uint32_t))
-
-struct sony_popp_effect_set_params_command {
-	struct apr_hdr	hdr;
-	struct asm_stream_cmd_set_pp_params_v2 params;
-	struct asm_stream_param_data_v2 data;
-} __packed;
-
 /* Module/Parameter IDs */
-#define ADM_MODULE_ID_XLOUD			0x10002010
-#define ADM_MODULE_ID_CP			0x10002020
-#define ASM_MODULE_ID_DN			0x10002040
-#define ASM_MODULE_ID_SONYBUNDLE		0x10002050
-#define ASM_MODULE_ID_VPT51			0x10002060
-#define ASM_MODULE_ID_S_FORCE		0x10002070
+#define ASM_MODULE_ID_SONYBUNDLE            0x10002010
 
-#define PARAM_ID_SONY_EFFECT			0x10002001
-#define PARAM_ID_SONY_EFFECT_TUNING		0x10002002
+#define PARAM_ID_SB_COMMON_USER_PARAM       0x10002011
+#define PARAM_ID_SB_DYNAMICNORMALIZER_USER_PARAM 0x10002012
+#define PARAM_ID_SB_SFORCE_USER_PARAM       0x10002013
+#define PARAM_ID_SB_VPT20_USER_PARAM        0x10002014
+#define PARAM_ID_SB_CLEARPHASE_HP_USER_PARAM 0x10002015
+#define PARAM_ID_SB_CLEARAUDIO_USER_PARAM   0x10002016
+#define PARAM_ID_SB_CLEARAUDIO_VOLUME_PARAM 0x10002017
+#define PARAM_ID_SB_CLEARPHASE_SP_USER_PARAM 0x10002018
+#define PARAM_ID_SB_XLOUD_USER_PARAM        0x10002019
 
-#define PARAM_ID_CP_HP_TUNING                   0x10002051
+#define PARAM_ID_SB_CLEARPHASE_HP_TUNING    0x1000201A
+#define PARAM_ID_SB_SFORCE_TUNING           0x1000201B
+#define PARAM_ID_SB_CLEARPHASE_SP_TUNING    0x1000201C
+#define PARAM_ID_SB_XLOUD_TUNING            0x1000201D
 
-#define ASM_STREAM_POSTPROC_TOPO_ID_SONY	0x10002101
-
-struct xloud_params {
-	uint16_t	enable;
-	uint16_t	reserved;
-} __packed;
-
-struct clearphase_params {
-	uint16_t	enable;
-	uint16_t	reserved;
-} __packed;
-
-struct sonybundle_params {
-	uint16_t	enable;
-	uint16_t	reserved;
-	int32_t		chsep_coef;
-	int16_t		eq_coef[6];
-	uint16_t	vpt_mode;
-	uint16_t	reserved2;
-	uint16_t	clearphase_hp_mode;
-	uint16_t	reserved3;
-} __packed;
-
-struct vpt_params {
-	uint16_t	enable;
-	uint16_t	mode;
-} __packed;
+#define ASM_STREAM_POSTPROC_TOPO_ID_SONY    0x10002101
 
 struct clearphase_hp_tuning_params {
 	unsigned char coefs[2064];
 } __packed;
 
-struct dynamicnormalizer_params {
-	uint16_t	enable;
-	uint16_t	reserved;
-} __packed;
-
-struct s_force_params {
-	uint16_t	enable;
-	uint16_t	reserved;
-} __packed;
-
 struct s_force_tuning_params {
-	unsigned char	coefs[1016];
+	unsigned char coefs[1016];
 } __packed;
 
-int sony_copp_effect_set(int port_id, void *params,
-				uint32_t param_size, uint32_t module_id);
-int sony_copp_effect_get(int port_id, void *params,
-				uint32_t param_size, uint32_t module_id);
-int sony_popp_effect_set(void *client, void *params,
-		uint32_t param_size, uint32_t module_id, uint32_t param_id);
-void sony_vol_module_update(void *client, uint32_t module);
-void sony_send_max_vol(void *client);
-void sony_send_s_force_param(int type, void *client);
-void sony_send_clearphase_hp_param(void *client);
+struct clearphase_sp_tuning_params {
+	unsigned char coefs[2360];
+} __packed;
 
+struct xloud_tuning_params {
+	unsigned int  level;
+	unsigned char coefs[512];
+} __packed;
 /* SOMC effect end */
 
 /* ERROR CODES */
@@ -7028,6 +6994,7 @@ void sony_send_clearphase_hp_param(void *client);
 #define Q6AFE_LPASS_IBIT_CLK_1_P024_MHZ		 0xFA000
 #define Q6AFE_LPASS_IBIT_CLK_768_KHZ		 0xBB800
 #define Q6AFE_LPASS_IBIT_CLK_512_KHZ		 0x7D000
+#define Q6AFE_LPASS_IBIT_CLK_256_KHZ		 0x3E800
 #define Q6AFE_LPASS_IBIT_CLK_DISABLE		     0x0
 
 /* Supported LPASS CLK sources */
@@ -7325,49 +7292,8 @@ struct afe_svc_cmd_set_clip_bank_selection {
 /* Ultrasound supported formats */
 #define US_POINT_EPOS_FORMAT_V2 0x0001272D
 #define US_RAW_FORMAT_V2        0x0001272C
-#define US_PROX_FORMAT_V2       0x0001272E
+#define US_PROX_FORMAT_V4       0x0001273B
 #define US_RAW_SYNC_FORMAT      0x0001272F
 #define US_GES_SYNC_FORMAT      0x00012730
-
-#define AFE_MODULE_GROUP_DEVICE	0x00010254
-#define AFE_PARAM_ID_GROUP_DEVICE_CFG	0x00010255
-#define AFE_PARAM_ID_GROUP_DEVICE_ENABLE 0x00010256
-#define AFE_GROUP_DEVICE_ID_SECONDARY_MI2S_RX	0x1102
-
-/*  Payload of the #AFE_PARAM_ID_GROUP_DEVICE_CFG
- * parameter, which configures max of 8 AFE ports
- * into a group.
- * The fixed size of this structure is sixteen bytes.
- */
-struct afe_group_device_group_cfg {
-	u32 minor_version;
-	u16 group_id;
-	u16 num_channels;
-	u16 port_id[8];
-} __packed;
-
-
-/*  Payload of the #AFE_PARAM_ID_GROUP_DEVICE_ENABLE
- * parameter, which enables or
- * disables any module.
- * The fixed size of this structure is four bytes.
- */
-
-struct afe_group_device_enable {
-	u16 group_id;
-	/* valid value is AFE_GROUP_DEVICE_ID_SECONDARY_MI2S_RX */
-	u16 enable;
-/* Enables (1) or disables (0) the module. */
-} __packed;
-
-struct afe_port_group_create {
-	struct apr_hdr hdr;
-	struct afe_svc_cmd_set_param param;
-	struct afe_port_param_data_v2 pdata;
-	union {
-		struct afe_group_device_group_cfg group_cfg;
-		struct afe_group_device_enable group_enable;
-	} __packed data;
-} __packed;
 
 #endif /*_APR_AUDIO_V2_H_ */

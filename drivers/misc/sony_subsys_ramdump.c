@@ -14,7 +14,6 @@
 #include <linux/module.h>
 #include <linux/uaccess.h>
 #include <linux/fs.h>
-#include <linux/delay.h>
 #include <linux/kthread.h>
 #include <linux/list.h>
 #include <linux/io.h>
@@ -23,7 +22,6 @@
 #include <linux/debugfs.h>
 #include <linux/poll.h>
 #include <linux/wait.h>
-#include <asm/current.h>
 #include <linux/list.h>
 #include <linux/sony_subsys_ramdump.h>
 
@@ -33,9 +31,9 @@
  * struct subsys_device - subsystem device
  * @list: device
  * @name: Subsystem device name
- * @dev_ptr: subsys device for the subsystem
  * @subsys_dir: debugfs directory for this device
  * @dentry: debugfs file for this device
+ * @restart: debugfs file for this device
  * @data_ready: variable to inform data is ready to user space
  * @crash_reason: Crash message
  * @subsys_event_q: subsystem event wait queue of the debug files
@@ -43,16 +41,15 @@
 struct subsys_device {
 	struct list_head list;
 	char name[SUBSYS_NAME_LEN];
-	void *dev_ptr;
 	struct dentry *subsys_dir;
 	struct dentry *dentry;
+	struct dentry *restart;
 	char crash_reason[SUBSYS_CRASH_REASON_LEN];
 };
 
 struct ramdump_dev {
 	int data_ready;
 	wait_queue_head_t event_q;
-	struct dentry *event;
 	char buf[SUBSYS_NAME_LEN];
 	struct mutex msg_lock;
 	struct completion ramdump_complete;
@@ -139,10 +136,37 @@ static ssize_t crash_reason_read(struct file *filp, char __user *ubuf,
 	return size;
 }
 
+static ssize_t debugfs_restart_write(struct file *filp,
+		const char __user *ubuf, size_t cnt, loff_t *ppos)
+{
+	struct subsys_device *subsys = filp->private_data;
+	char buf[10];
+	char *cmp;
+
+	cnt = min(cnt, sizeof(buf) - 1);
+	if (copy_from_user(&buf, ubuf, cnt))
+		return -EFAULT;
+	buf[cnt] = '\0';
+	cmp = strstrip(buf);
+
+	if (!strcmp(cmp, "1"))
+		sony_subsys_notify_crash(subsys->name, "Forced by user");
+	else
+		return -EINVAL;
+
+	*ppos += cnt;
+	return cnt;
+}
+
 static const struct file_operations crash_reason_fops = {
 	.open = simple_open,
 	.read = crash_reason_read,
 	.llseek = default_llseek,
+};
+
+static const struct file_operations restart_fops = {
+	.open = simple_open,
+	.write  = debugfs_restart_write,
 };
 
 static int __init sony_subsys_debugfs_init(void)
@@ -150,9 +174,8 @@ static int __init sony_subsys_debugfs_init(void)
 	root_dir = debugfs_create_dir("sony_subsys", NULL);
 
 	if (root_dir) {
-		rdev.event = debugfs_create_file("event",
-					S_IRUGO | S_IWUSR, root_dir,
-					&rdev, &event_fops);
+		debugfs_create_file("event", S_IRUGO | S_IWUSR,
+				root_dir, &rdev, &event_fops);
 	}
 	return !root_dir ? -ENOMEM : 0;
 }
@@ -165,13 +188,18 @@ static int sony_subsys_debugfs_create(struct subsys_device *subsys)
 		subsys->dentry = debugfs_create_file("crash_reason",
 					S_IRUGO | S_IWUSR, subsys->subsys_dir,
 					subsys, &crash_reason_fops);
+		subsys->restart = debugfs_create_file("restart",
+					S_IRUGO | S_IWUSR, root_dir,
+					subsys, &restart_fops);
 	}
-	return !subsys->dentry ? (!subsys->subsys_dir ? -ENOMEM : 0) : 0;
+	return (!subsys->dentry && !subsys->restart) ?
+				(!subsys->subsys_dir ? -ENOMEM : 0) : 0;
 }
 
 /**
- * sony_subsys_notify_crash() - Dumps the subsystem
- * @subsys_name: Subsystem name to find out the registerded device
+ * sony_subsys_notify_crash() - Wake up the dump listeners and dumps the
+ * subsystem if enable_ssr_dump is zero
+ * @subsys_name: Subsystem name to find out the registered device
  * @msg: Reason for the crash
  * This function wake up the respective ramdump deivce queue
  * and also updates the crash reason the in the debugfs
@@ -211,7 +239,7 @@ EXPORT_SYMBOL(sony_subsys_notify_crash);
 
 /**
  * register_sony_subsys() - register the subsystem
- * @subsys_name: Subsystem name to find out the registerded device
+ * @subsys_name: Subsystem name to find out the registered device
  * 1.Initlizes the subsystem debugfs wait queue
  * 2.Creates the ramdump debug files
  * 3.Creates the respective subsystem debug entry
@@ -248,7 +276,7 @@ EXPORT_SYMBOL(register_sony_subsys);
 
 /**
  * unregister_sony_subsys() - unregister the subsystem
- * @subsys_name: Subsystem name to find out the registerded device
+ * @subsys_name: Subsystem name to find out the registered device
  * 1.Removes the ramdump debug files
  * 2.unregisters the device from the list
  * 3.frees the respective subsystem debug entry
@@ -258,6 +286,7 @@ void unregister_sony_subsys(const char *subsys_name)
 	struct subsys_device *subsys = sony_subsys_find_device(subsys_name);
 	if (subsys) {
 		pr_info("unregistering subsystem %s\n", subsys->name);
+		debugfs_remove(subsys->restart);
 		debugfs_remove(subsys->dentry);
 		debugfs_remove(subsys->subsys_dir);
 		mutex_lock(&list_lock);

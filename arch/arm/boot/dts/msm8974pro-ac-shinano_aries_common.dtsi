@@ -151,7 +151,7 @@
 					has_focus_actuator = <1>;
 					has_3a = <0>;
 					pll_num = <18>;
-					pll = <600 318 386 684 318 578 293 388 597 599 318 596 599 474 599 825 578 578>;
+					pll = <600 318 386 684 318 578 293 600 597 599 318 596 599 474 599 825 578 578>;
 					power_off {
 						commands =
 								"I2C_WRITE",
@@ -204,7 +204,7 @@
 					has_focus_actuator = <1>;
 					has_3a = <0>;
 					pll_num = <18>;
-					pll = <600 318 386 684 318 578 293 388 597 599 318 596 599 474 599 825 578 578>;
+					pll = <600 318 386 684 318 578 293 600 597 599 318 596 599 474 599 825 578 578>;
 					power_off {
 						commands =
 								"I2C_WRITE",
@@ -305,7 +305,7 @@
 					has_focus_actuator = <0>;
 					has_3a = <0>;
 					pll_num = <18>;
-					pll = <104 104 104 104 104 104 104 101 104 104 104 104 104 104 104 104 104 104>;
+					pll = <104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104>;
 					power_off {
 						commands =
 								"I2C_WRITE",
@@ -354,7 +354,7 @@
 					has_focus_actuator = <0>;
 					has_3a = <0>;
 					pll_num = <18>;
-					pll = <104 104 104 104 104 104 104 101 104 104 104 104 104 104 104 104 104 104>;
+					pll = <104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104>;
 					power_off {
 						commands =
 								"I2C_WRITE",
@@ -403,7 +403,7 @@
 					has_focus_actuator = <0>;
 					has_3a = <0>;
 					pll_num = <18>;
-					pll = <104 104 104 104 104 104 104 101 104 104 104 104 104 104 104 104 104 104>;
+					pll = <104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104 104>;
 					power_off {
 						commands =
 								"I2C_WRITE",
@@ -468,8 +468,6 @@
 	gpio_keys {
 		compatible = "gpio-keys";
 		input-name = "gpio-keys";
-		interrupt-parent = <&msmgpio>;
-		interrupts = <9 0>;
 
 		vol_dn {
 			label = "volume_down";
@@ -506,13 +504,16 @@
 			gpio-key,wakeup;
 			debounce-interval = <15>;
 		};
+	};
 
-		sim_det {
+	sim_detect {
+		compatible = "sim-detect";
+		interrupt-parent = <&msmgpio>;
+		interrupts = <9 0>;
+
+		sim1_det {
 			label = "sim-detection";
 			gpios = <&msmgpio 9 0x0>;
-			linux,input-type = <5>;
-			linux,code = <7>;
-			gpio-key,wakeup;
 			debounce-interval = <10>;
 		};
 	};
@@ -539,16 +540,16 @@
 		qcom,mbhc-audio-jack-type = "5-pole-jack";
 	};
 
-	qcom,msm-pcm-bit {
-		compatible = "qcom,msm-pcm-dsp";
-		qcom,msm-pcm-dsp-id = <2>;
-		qcom,msm-pcm-bit;
+	qti,msm-pcm-bit {
+		compatible = "qti,msm-pcm-dsp";
+		qti,msm-pcm-dsp-id = <2>;
+		qti,msm-pcm-bit;
 	};
 
-	qcom,msm-pcm-dsee {
-		compatible = "qcom,msm-pcm-dsp";
-		qcom,msm-pcm-dsp-id = <3>;
-		qcom,msm-pcm-dsee;
+	qti,msm-pcm-dsee {
+		compatible = "qti,msm-pcm-dsp";
+		qti,msm-pcm-dsp-id = <3>;
+		qti,msm-pcm-dsee;
 	};
 
 	bu520x1nvx {

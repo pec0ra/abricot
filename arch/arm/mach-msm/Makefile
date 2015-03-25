@@ -308,16 +308,40 @@ obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-rfkill.o msm_vibrator.o
 
 ifdef CONFIG_MACH_SONY_SIRIUS
 	obj-$(CONFIG_MACH_SONY_SIRIUS) += board-sony_sirius-gpiomux.o board-sony_sirius_samba-gpiomux-diff.o board-sony_shinano-nfc.o bms-batterydata-gouf.o
+else ifdef CONFIG_MACH_SONY_SIRIUS_DCM
+	obj-$(CONFIG_MACH_SONY_SIRIUS_DCM) += board-sony_sirius_dcm-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-gouf.o
+else ifdef CONFIG_MACH_SONY_SIRIUS_VZW
+	obj-$(CONFIG_MACH_SONY_SIRIUS_VZW) += board-sony_sirius_vzw-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-gouf.o
 else ifdef CONFIG_MACH_SONY_CASTOR
 	obj-$(CONFIG_MACH_SONY_CASTOR) += board-sony_castor-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
+else ifdef CONFIG_MACH_SONY_CASTOR_DCM
+	obj-$(CONFIG_MACH_SONY_CASTOR_DCM) += board-sony_castor_dcm-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
+else ifdef CONFIG_MACH_SONY_CASTOR_KDDI
+	obj-$(CONFIG_MACH_SONY_CASTOR_KDDI) += board-sony_castor_kddi-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
+else ifdef CONFIG_MACH_SONY_CASTOR_VZW
+	obj-$(CONFIG_MACH_SONY_CASTOR_VZW) += board-sony_castor_vzw-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
 else ifdef CONFIG_MACH_SONY_CASTOR_BRAZIL
 	obj-$(CONFIG_MACH_SONY_CASTOR_BRAZIL) += board-sony_castor_brazil-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
 else ifdef CONFIG_MACH_SONY_CASTOR_WINDY
 	obj-$(CONFIG_MACH_SONY_CASTOR_WINDY) += board-sony_castor_windy-gpiomux.o board-sony_shinano-nfc.o bms-batterydata-vega.o
+else ifdef CONFIG_MACH_SONY_CANOPUS
+	obj-$(CONFIG_MACH_SONY_CANOPUS) += board-sony_canopus-gpiomux.o bms-batterydata-zock.o board-sony_shinano-nfc.o
+else ifdef CONFIG_MACH_SONY_CANOPUS_KDDI
+	obj-$(CONFIG_MACH_SONY_CANOPUS_KDDI) += board-sony_canopus_kddi-gpiomux.o bms-batterydata-zock.o board-sony_shinano-nfc.o
 else ifdef CONFIG_MACH_SONY_LEO
 	obj-$(CONFIG_MACH_SONY_LEO) += board-sony_leo-gpiomux.o board-sony_leo_samba-gpiomux-diff.o bms-batterydata-leo.o board-sony_shinano-nfc.o
+else ifdef CONFIG_MACH_SONY_LEO_DCM
+	obj-$(CONFIG_MACH_SONY_LEO_DCM) += board-sony_leo_dcm-gpiomux.o bms-batterydata-leo.o
+else ifdef CONFIG_MACH_SONY_LEO_KDDI
+	obj-$(CONFIG_MACH_SONY_LEO_KDDI) += board-sony_leo_kddi-gpiomux.o bms-batterydata-leo.o
+else ifdef CONFIG_MACH_SONY_LEO_SBM
+	obj-$(CONFIG_MACH_SONY_LEO_SBM) += board-sony_leo_sbm-gpiomux.o bms-batterydata-leo.o board-sony_shinano-nfc.o
+else ifdef CONFIG_MACH_SONY_LEO_DSDS
+	obj-$(CONFIG_MACH_SONY_LEO_DSDS) += board-sony_leo_dsds-gpiomux.o bms-batterydata-leo.o board-sony_shinano-nfc.o sim_detect_somc.o
 else ifdef CONFIG_MACH_SONY_ARIES
 	obj-$(CONFIG_MACH_SONY_ARIES) += board-sony_aries-gpiomux.o bms-batterydata-aries.o board-sony_shinano-nfc.o
+else ifdef CONFIG_MACH_SONY_ARIES_DCM
+	obj-$(CONFIG_MACH_SONY_ARIES_DCM) += board-sony_aries_dcm-gpiomux.o bms-batterydata-aries.o board-sony_shinano-nfc.o
 else ifdef CONFIG_MACH_SONY_SCORPION
 	obj-$(CONFIG_MACH_SONY_SCORPION) += board-sony_scorpion-gpiomux.o bms-batterydata-scorpion.o board-sony_shinano-nfc.o
 else ifdef CONFIG_MACH_SONY_SCORPION_WINDY
