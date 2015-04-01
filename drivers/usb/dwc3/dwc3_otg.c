@@ -19,6 +19,12 @@
 #include <linux/usb/hcd.h>
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#define USB_FASTCHG_LOAD 1500 /* uA */
+#endif
+
 #ifdef CONFIG_USB_HOST_EXTRA_NOTIFICATION
 #include <linux/usb/host_ext_event.h>
 #endif
@@ -27,6 +33,7 @@
 #include "dwc3_otg.h"
 #include "io.h"
 #include "xhci.h"
+
 
 #define VBUS_REG_CHECK_DELAY	(msecs_to_jiffies(1000))
 #define MAX_INVALID_CHRGR_RETRY 5
@@ -630,6 +637,24 @@ static int dwc3_otg_set_power(struct usb_phy *phy, unsigned mA)
 	dev_info(phy->dev, "Avail curr from USB = %u\n", mA);
 
 	if (dotg->charger->max_power <= 2 && mA > 2) {
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		if (force_fast_charge == 1) {
+			// DooMLoRD: dont override charging current if available current is greater
+			if (mA >= USB_FASTCHG_LOAD){
+				pr_info(FASTCHG_INFO_TAG" Available current already greater than USB fastcharging current!!!\n");
+				pr_info(FASTCHG_INFO_TAG" Override of USB charging current cancelled.\n");
+			} else {				
+				mA = USB_FASTCHG_LOAD;
+				pr_info(FASTCHG_INFO_TAG" USB fast charging is ON!!!\n");
+			}
+			dev_info(phy->dev, FASTCHG_INFO_TAG" Curr from USB set to %u\n", mA);
+
+		} else {
+			pr_info(FASTCHG_INFO_TAG" USB fast charging is OFF.\n");
+		}
+#endif
+
 		/* Enable charging */
 		if (power_supply_set_online(dotg->psy, true))
 			goto psy_error;
@@ -643,6 +668,7 @@ static int dwc3_otg_set_power(struct usb_phy *phy, unsigned mA)
 		if (power_supply_set_current_limit(dotg->psy, 0))
 			goto psy_error;
 	}
+
 
 	power_supply_changed(dotg->psy);
 	dotg->charger->max_power = mA;

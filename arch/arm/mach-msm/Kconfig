@@ -3187,3 +3187,10 @@ config SIM_DETECT_FEATURE
 	 based on modem hotstwap ISR to work around GPIO 56/60
 	 prevent AP suspend issue.use modem side GPIO detect to SIM insert
 	 or remove, and notify AP to handle reboot
+
+config FORCE_FAST_CHARGE
+	bool "Force AC charge mode at will"
+	default y
+	help
+	 A simple sysfs interface to force adapters that
+	 are detected as USB to charge as AC.
