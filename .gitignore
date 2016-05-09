@@ -96,4 +96,5 @@ arch/arm/boot/zImage*
 arch/arm/kernel/vmlinux.lds
 
 elf
+kernel/config_data.h
 
