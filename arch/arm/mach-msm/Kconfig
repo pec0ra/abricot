@@ -1941,8 +1941,6 @@ config MSM_DALRPC_TEST
 	help
 	  Exercises DAL RPC calls to QDSP6.
 
-<<<<<<< HEAD
-=======
 config MSM_MPDEC
 	bool "Enable kernel based mpdecision"
 	depends on MSM_SMP
@@ -1957,7 +1955,6 @@ config FAST_HOTPLUG
 	help
 	  Kernel based core control.
 
->>>>>>> f3f83a7... Base structure for the hotplug
 if CPU_FREQ_MSM
 
 config MSM_CPU_FREQ_SET_MIN_MAX
