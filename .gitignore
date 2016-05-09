@@ -92,6 +92,8 @@ arch/arm/boot/compressed/piggy.xzkern
 arch/arm/boot/compressed/vmlinux
 arch/arm/boot/compressed/vmlinux.lds
 arch/arm/boot/msm8974pro-ab-shinano_sirius.dtb
-arch/arm/boot/zImage
+arch/arm/boot/zImage*
 arch/arm/kernel/vmlinux.lds
+
+elf
 
