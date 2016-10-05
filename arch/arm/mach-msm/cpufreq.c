@@ -1,22 +1,3 @@
-/* arch/arm/mach-msm/cpufreq.c
- *
- * MSM architecture cpufreq driver
- *
- * Copyright (C) 2007 Google, Inc.
- * Copyright (c) 2007-2013, The Linux Foundation. All rights reserved.
- * Author: Mike A. Chan <mikechan@google.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
- * GNU General Public License for more details.
- *
- */
-
 #include <linux/earlysuspend.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -252,11 +233,7 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 	table = cpufreq_frequency_get_table(policy->cpu);
 	if (table == NULL)
 		return -ENODEV;
-	/*
-	 * In 8625, 8610, and 8226 both cpu core's frequency can not
-	 * be changed independently. Each cpu is bound to
-	 * same frequency. Hence set the cpumask to all cpu.
-	 */
+	
 	if (cpu_is_msm8625() || cpu_is_msm8625q() || cpu_is_msm8226()
 		|| cpu_is_msm8610() || (is_clk && is_sync))
 		cpumask_setall(policy->cpus);
@@ -265,7 +242,6 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 	INIT_WORK(&cpu_work->work, set_cpu_work);
 	init_completion(&cpu_work->complete);
 
-	/* synchronous cpus share the same policy */
 	if (is_clk && !cpu_clk[policy->cpu])
 		return 0;
 
@@ -293,10 +269,7 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 				policy->cpu, cur_freq);
 		return -EINVAL;
 	}
-	/*
-	 * Call set_cpu_freq unconditionally so that when cpu is set to
-	 * online, frequency limit will always be updated.
-	 */
+
 	ret = set_cpu_freq(policy, table[index].frequency, table[index].index);
 	if (ret)
 		return ret;
@@ -328,10 +301,7 @@ static int __cpuinit msm_cpufreq_cpu_callback(struct notifier_block *nfb,
 	case CPU_DOWN_FAILED:
 		per_cpu(cpufreq_suspend, cpu).device_suspended = 0;
 		break;
-	/*
-	 * Scale down clock/power of CPU that is dead and scale it back up
-	 * before the CPU is brought up.
-	 */
+
 	case CPU_DEAD:
 		if (is_clk) {
 			clk_disable_unprepare(cpu_clk[cpu]);
@@ -378,12 +348,7 @@ static struct notifier_block __refdata msm_cpufreq_cpu_notifier = {
 	.notifier_call = msm_cpufreq_cpu_callback,
 };
 
-/*
- * Define suspend/resume for cpufreq_driver. Kernel will call
- * these during suspend/resume with interrupts disabled. This
- * helps the suspend/resume variable get's updated before cpufreq
- * governor tries to change the frequency after coming out of suspend.
- */
+
 static int msm_cpufreq_suspend(struct cpufreq_policy *policy)
 {
 	int cpu;
@@ -412,7 +377,7 @@ static struct freq_attr *msm_freq_attr[] = {
 };
 
 static struct cpufreq_driver msm_cpufreq_driver = {
-	/* lps calculations are handled here. */
+	
 	.flags		= CPUFREQ_STICKY | CPUFREQ_CONST_LOOPS,
 	.init		= msm_cpufreq_init,
 	.verify		= msm_cpufreq_verify,
@@ -433,7 +398,6 @@ static int cpufreq_parse_dt(struct device *dev)
 	if (l2_clk)
 		num_cols++;
 
-	/* Parse CPU freq -> L2/Mem BW map table. */
 	if (!of_find_property(dev->of_node, PROP_TBL, &len))
 		return -EINVAL;
 	len /= sizeof(*data);
@@ -450,7 +414,6 @@ static int cpufreq_parse_dt(struct device *dev)
 	if (ret)
 		return ret;
 
-	/* Allocate all data structures. */
 	freq_table = devm_kzalloc(dev, (nf + 1) * sizeof(*freq_table),
 				  GFP_KERNEL);
 	mem_bw = devm_kzalloc(dev, nf * sizeof(*mem_bw), GFP_KERNEL);
@@ -473,21 +436,7 @@ static int cpufreq_parse_dt(struct device *dev)
 			break;
 		f /= 1000;
 
-		/*
-		 * Check if this is the last feasible frequency in the table.
-		 *
-		 * The table listing frequencies higher than what the HW can
-		 * support is not an error since the table might be shared
-		 * across CPUs in different speed bins. It's also not
-		 * sufficient to check if the rounded rate is lower than the
-		 * requested rate as it doesn't cover the following example:
-		 *
-		 * Table lists: 2.2 GHz and 2.5 GHz.
-		 * Rounded rate returns: 2.2 GHz and 2.3 GHz.
-		 *
-		 * In this case, we can CPUfreq to use 2.2 GHz and 2.3 GHz
-		 * instead of rejecting the 2.5 GHz table entry.
-		 */
+		
 		if (i > 0 && f <= freq_table[i-1].frequency)
 			break;
 
