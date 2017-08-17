@@ -1180,6 +1180,7 @@ qpnp_chg_is_ichg_loop_active(struct qpnp_chg_chip *chip)
 #define QPNP_CHG_I_MAX_MIN_MA		300
 #define QPNP_CHG_I_MAX_MAX_MA		3500
 #define QPNP_CHG_I_MAXSTEP_MA		100
+// TODO
 static int
 qpnp_chg_idcmax_set(struct qpnp_chg_chip *chip, int mA)
 {
@@ -2895,6 +2896,7 @@ static int get_prop_online(struct qpnp_chg_chip *chip)
 	return qpnp_chg_is_batfet_closed(chip);
 }
 
+// TODO
 static void
 qpnp_batt_external_power_changed(struct power_supply *psy)
 {
@@ -2902,6 +2904,7 @@ qpnp_batt_external_power_changed(struct power_supply *psy)
 								batt_psy);
 	union power_supply_propval ret = {0,};
 	int current_ua;
+	printk(TAG "external power changed")
 
 	if (!chip)
 		return;
