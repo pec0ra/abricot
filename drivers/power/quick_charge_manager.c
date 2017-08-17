@@ -14,6 +14,8 @@
  *
  */
 
+// TODO: Does nothing yet as variables need to be imported in qpnp-charger.c
+
 #include <linux/module.h>
 #include <linux/input.h>
 #include <linux/power/quick_charge_manager.h>
