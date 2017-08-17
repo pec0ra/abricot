@@ -2904,7 +2904,6 @@ qpnp_batt_external_power_changed(struct power_supply *psy)
 								batt_psy);
 	union power_supply_propval ret = {0,};
 	int current_ua;
-	printk(TAG "external power changed")
 
 	if (!chip)
 		return;
