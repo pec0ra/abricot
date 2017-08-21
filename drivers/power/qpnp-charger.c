@@ -41,16 +41,7 @@
 #include <linux/qpnp/pin.h>
 #include <linux/input.h>
 #include <linux/switch.h>
-
-/* Quick Charge 2.0 */
-#define TAG					"QC2.0 : "
-#define ENABLE_QUICK_CHARGE			0
-#define NO_IBATMAX				-1
-#define MAX_IBATMAX_MA_UNDER_STEP		2150
-#define IBATMAX_MA_UNDER_STEP_DEFAULT		2150
-#define MAX_BAT_CHG_CURRENT			2150
-#define SAFE_CURRENT				2150
-#define MAXINPUT_MV				13000
+#include <linux/power/quick_charge_manager.h>
 
 /* Interrupt offsets */
 #define INT_RT_STS(base)			(base + 0x10)
@@ -642,81 +633,6 @@ do {									\
 		pr_err("Error reading " #qpnp_dt_property		\
 				" property rc = %d\n", rc);		\
 } while (0)
-
-
-/* Quick charge 2.0 */
-static int ibatmax_ma_under_step = IBATMAX_MA_UNDER_STEP_DEFAULT;
-static int qc_enabled = ENABLE_QUICK_CHARGE;
-
-static int
-set_ibatmax_ma_under_step(const char *val, const struct kernel_param *kp){
-	int rc = 0;
-	
-	/* Read value from sys */
-	int ret = param_set_int(val, kp);
-
-	struct power_supply *batt_psy = power_supply_get_by_name("battery");
-	struct qpnp_chg_chip *chip = container_of(batt_psy,
-				struct qpnp_chg_chip, batt_psy);
-	if(qc_enabled){
-		printk(TAG "Changing ibatmax_ma_under_step to %d\n", ibatmax_ma_under_step);
-		chip->somc_params.stepchg_ibatmax_ma_under_step = ibatmax_ma_under_step;
-	} else {
-		printk(TAG "QC not enabled. keeping ibatmax_ma_under_step to %d\n", chip->somc_params.stepchg_ibatmax_ma_under_step);
-		if (rc)
-			pr_err("failed to read required dt parameters %d\n", rc);
-	}
-	return ret;
-}
-static struct kernel_param_ops params_ops_change = {
-       .set = set_ibatmax_ma_under_step,
-       .get = param_get_uint,
-};
-module_param_cb(ibatmax_ma_under_step, &params_ops_change, &ibatmax_ma_under_step, 0644);
-
-static int
-set_qc_enabled(const char *val, const struct kernel_param *kp){
-	int rc = 0;
-	
-	/* Read value from sys */
-	int ret = param_set_bool(val, kp);
-
-	struct power_supply *batt_psy = power_supply_get_by_name("battery");
-	struct qpnp_chg_chip *chip = container_of(batt_psy,
-				struct qpnp_chg_chip, batt_psy);
-
-	if(qc_enabled){
-		chip->somc_params.stepchg_ibatmax_ma_under_step = ibatmax_ma_under_step;
-		chip->max_bat_chg_current = MAX_BAT_CHG_CURRENT;
-		chip->safe_current = SAFE_CURRENT;
-		chip->somc_params.maxinput_usb_mv = MAXINPUT_MV;
-		chip->somc_params.maxinput_dc_mv = MAXINPUT_MV;
-		printk(TAG "QC 2.0 enabled");
-		printk(TAG "ibatmax_ma_under_step is set to %d\n", ibatmax_ma_under_step);
-	} else {
-		OF_PROP_READ(chip, safe_current, "ibatsafe-ma", rc, 0);
-		OF_PROP_READ(chip, max_bat_chg_current, "ibatmax-ma", rc, 0);
-	
-		OF_PROP_READ(chip, somc_params.maxinput_dc_mv, "maxinput-dc-mv",
-				rc, 1);
-		OF_PROP_READ(chip, somc_params.maxinput_usb_mv, "maxinput-usb-mv",
-				rc, 1);
-		OF_PROP_READ(chip, somc_params.stepchg_ibatmax_ma_under_step,
-				"ibatmax-ma-under-step", rc, 1);
-		if (rc)
-			pr_err("failed to read required dt parameters %d\n", rc);
-		printk(TAG "QC 2.0 disabled");
-
-	}
-	return ret;
-}
-static struct kernel_param_ops params_ops_enable = {
-       .set = set_qc_enabled,
-       .get = param_get_uint,
-};
-module_param_cb(qc_enabled, &params_ops_enable, &qc_enabled, 0644);
-
-
 
 
 static int ext_ovp_isns_present;
@@ -1490,6 +1406,7 @@ qpnp_chg_usb_suspend_enable(struct qpnp_chg_chip *chip, int enable)
 static int
 qpnp_chg_charge_en(struct qpnp_chg_chip *chip, int enable)
 {
+        int rc = 0;
 	if (chip->somc_params.ovp_chg_dis && enable)
 		return 0;
 
@@ -1498,6 +1415,39 @@ qpnp_chg_charge_en(struct qpnp_chg_chip *chip, int enable)
 		return 0;
 	}
 	pr_debug("charging %s\n", enable ? "enabled" : "disabled");
+
+#ifdef CONFIG_QUICK_CHARGE
+        // Set correct charging values for Quick Charge
+	if(qc_enabled){
+		chip->somc_params.stepchg_ibatmax_ma_under_step = ibatmax_ma_under_step;
+		chip->max_bat_chg_current = MAX_BAT_CHG_CURRENT;
+		chip->safe_current = SAFE_CURRENT;
+		chip->somc_params.maxinput_usb_mv = MAXINPUT_MV;
+		chip->somc_params.maxinput_dc_mv = MAXINPUT_MV;
+#ifdef QUICK_CHARGE_DEBUG
+                printk(TAG "Values set to QC");
+		printk(TAG "ibatmax_ma_under_step is set to %d\n", ibatmax_ma_under_step);
+#endif
+	} else {
+#endif
+		OF_PROP_READ(chip, safe_current, "ibatsafe-ma", rc, 0);
+		OF_PROP_READ(chip, max_bat_chg_current, "ibatmax-ma", rc, 0);
+	
+		OF_PROP_READ(chip, somc_params.maxinput_dc_mv, "maxinput-dc-mv",
+				rc, 1);
+		OF_PROP_READ(chip, somc_params.maxinput_usb_mv, "maxinput-usb-mv",
+				rc, 1);
+		OF_PROP_READ(chip, somc_params.stepchg_ibatmax_ma_under_step,
+				"ibatmax-ma-under-step", rc, 1);
+		if (rc)
+			pr_err("failed to read required dt parameters %d\n", rc);
+#ifdef QUICK_CHARGE_DEBUG
+                printk(TAG "Values set to default");
+#endif
+#ifdef CONFIG_QUICK_CHARGE
+	}
+#endif
+        
 
 	if (!enable &&
 		(qpnp_chg_is_usb_chg_plugged_in(chip) ||
@@ -2893,7 +2843,6 @@ static int get_prop_online(struct qpnp_chg_chip *chip)
 	return qpnp_chg_is_batfet_closed(chip);
 }
 
-// TODO
 static void
 qpnp_batt_external_power_changed(struct power_supply *psy)
 {
@@ -3218,7 +3167,6 @@ qpnp_chg_ibatmax_set(struct qpnp_chg_chip *chip, int chg_current)
 		pr_err("bad mA=%d asked to set\n", chg_current);
 		return -EINVAL;
 	}
-	printk(TAG "Ibatmax read : %d\n", chg_current);
 	temp = chg_current / QPNP_CHG_I_STEP_MA;
 	return qpnp_chg_masked_write(chip, chip->chgr_base + CHGR_IBAT_MAX,
 			QPNP_CHG_I_MASK, temp, 1);
@@ -3238,7 +3186,6 @@ qpnp_chg_ibatmax_get(struct qpnp_chg_chip *chip, int *chg_current)
 	}
 
 
-	printk(TAG "Ibatmax set to %d\n", ((temp & QPNP_CHG_I_MASK) * QPNP_CHG_I_STEP_MA));
 	*chg_current = ((temp & QPNP_CHG_I_MASK) * QPNP_CHG_I_STEP_MA);
 
 	return 0;
@@ -4766,12 +4713,10 @@ qpnp_chg_set_appropriate_battery_current(struct qpnp_chg_chip *chip)
 	if (chip->bat_is_warm)
 		chg_current = min(chg_current, chip->warm_bat_chg_ma);
 
-	printk(TAG "thermal mitigation level is : %d\n", chip->therm_lvl_sel);
 	if (chip->therm_lvl_sel != 0 && chip->thermal_mitigation)
 		chg_current = min(chg_current,
 			chip->thermal_mitigation[chip->therm_lvl_sel]);
 
-	printk(TAG "setting %d mA\n", chg_current);
 	pr_debug("setting %d mA\n", chg_current);
 	qpnp_chg_ibatmax_set(chip, chg_current);
 }
@@ -6863,15 +6808,16 @@ qpnp_charger_read_dt_props(struct qpnp_chg_chip *chip)
 	OF_PROP_READ(chip, min_voltage_mv, "vinmin-mv", rc, 0);
 	OF_PROP_READ(chip, safe_voltage_mv, "vddsafe-mv", rc, 0);
 	OF_PROP_READ(chip, resume_delta_mv, "vbatdet-delta-mv", rc, 0);
-	if(qc_enabled){
-		printk(TAG "QC enabled, initializing with QC values");
-		chip->safe_current = SAFE_CURRENT;
-		chip->max_bat_chg_current = MAX_BAT_CHG_CURRENT;
-	} else {
-		printk(TAG "QC disabled, initializing with default values");
-		OF_PROP_READ(chip, safe_current, "ibatsafe-ma", rc, 0);
-		OF_PROP_READ(chip, max_bat_chg_current, "ibatmax-ma", rc, 0);
-	}
+
+#ifdef CONFIG_QUICK_CHARGE
+        printk(TAG "Initializing qpnp charger with QC values");
+        chip->safe_current = SAFE_CURRENT;
+        chip->max_bat_chg_current = MAX_BAT_CHG_CURRENT;
+#else
+        printk(TAG "Initializing qpnp charger with default values");
+        OF_PROP_READ(chip, safe_current, "ibatsafe-ma", rc, 0);
+        OF_PROP_READ(chip, max_bat_chg_current, "ibatmax-ma", rc, 0);
+#endif
 	if (rc)
 		pr_err("failed to read required dt parameters %d\n", rc);
 
@@ -6885,15 +6831,17 @@ qpnp_charger_read_dt_props(struct qpnp_chg_chip *chip)
 	OF_PROP_READ(chip, cold_batt_p, "batt-cold-percentage", rc, 1);
 	OF_PROP_READ(chip, soc_resume_limit, "resume-soc", rc, 1);
 	OF_PROP_READ(chip, batt_weak_voltage_mv, "vbatweak-mv", rc, 1);
-	if(qc_enabled){
-		chip->somc_params.maxinput_dc_mv = MAXINPUT_MV;
-		chip->somc_params.maxinput_usb_mv = MAXINPUT_MV;
-	} else {
-		OF_PROP_READ(chip, somc_params.maxinput_dc_mv, "maxinput-dc-mv",
-				rc, 1);
-		OF_PROP_READ(chip, somc_params.maxinput_usb_mv, "maxinput-usb-mv",
-				rc, 1);
-	}
+
+#ifdef CONFIG_QUICK_CHARGE
+        chip->somc_params.maxinput_dc_mv = MAXINPUT_MV;
+        chip->somc_params.maxinput_usb_mv = MAXINPUT_MV;
+#else
+        OF_PROP_READ(chip, somc_params.maxinput_dc_mv, "maxinput-dc-mv",
+                        rc, 1);
+        OF_PROP_READ(chip, somc_params.maxinput_usb_mv, "maxinput-usb-mv",
+                        rc, 1);
+#endif
+
 	OF_PROP_READ(chip, somc_params.aging_max_voltage_mv,
 			"aging-vddmax-mv", rc, 1);
 	OF_PROP_READ(chip, somc_params.aging_ibatmax_ma,
@@ -7033,15 +6981,19 @@ qpnp_charger_read_dt_props(struct qpnp_chg_chip *chip)
 	OF_PROP_READ(chip, somc_params.stepchg_soc_threshold,
 			"step-thresh-soc", rc, 1);
 	if (chip->somc_params.stepchg_soc_threshold) {
-		if(qc_enabled){
-			chip->somc_params.stepchg_ibatmax_ma_under_step = ibatmax_ma_under_step;
-		} else {
-			OF_PROP_READ(chip, somc_params.stepchg_ibatmax_ma_under_step,
+
+#ifdef CONFIG_QUICK_CHARGE
+        chip->somc_params.stepchg_ibatmax_ma_under_step = ibatmax_ma_under_step;
+#else
+        OF_PROP_READ(chip, somc_params.stepchg_ibatmax_ma_under_step,
 					"ibatmax-ma-under-step", rc, 1);
-		}
+#endif
 		OF_PROP_READ(chip, max_bat_chg_current, "ibatmax-ma-over-step",
 				rc, 1);
 	}
+
+        printk(TAG "Setting quick charge as disabled after charger initialization");
+        qc_enabled = 0;
 
 	return rc;
 }
